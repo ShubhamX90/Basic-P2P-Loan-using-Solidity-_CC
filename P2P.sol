@@ -67,8 +67,12 @@ function provideCollateral() public onlyInState(LoanState.Created)
 
 function fundLoan() public onlyInState(LoanState.Created)
 {
-    //fundLoan() transfers goerliEth from the lender to the contract so that we can later transfer it to the borrower as a loan
+    //fundLoan() transfers tokens from the lender to the contract so that we can later transfer it to the borrower as a loan
     state = LoanState.Funded;
+    
+    //checking if the amount to be lended by the lender excceds his/her cureent balance 
+    require(msg.value > IERC20(IERC20Addr).balanceOf(msg.sender), "Amount to be lended excceds current balance");
+    
     //Transfer loan amount from lender's address to intermediate address for loan amount
     IERC20(IERC20Addr).transferFrom(msg.sender, address(this), terms.loanAmount);
     //storing initial timestamp of the block i.e. timestamp of sanctioning of loan
